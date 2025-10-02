@@ -43,15 +43,28 @@ func WithLogger(ctx context.Context, l *slog.Logger) context.Context {
 	return context.WithValue(ctx, contextKey, l)
 }
 
-// With returns a new context whose associated logger is the result of calling
-// the With method of the logger in the parent context with the given arguments.
-// If there is no logger in the parent context, slog.Default() will be used.
+// With returns a new child context whose associated logger is the result of
+// calling the With method of the logger in the parent context with the given
+// arguments. If there is no logger in the parent context, slog.Default() will
+// be used.
 func With(ctx context.Context, args ...any) context.Context {
 	l := FromContext(ctx)
 	if l == nil {
 		l = slog.Default()
 	}
 	return WithLogger(ctx, l.With(args...))
+}
+
+// WithGroup returns a new child context whose associated logger is the result
+// of calling the WithGroup method of the logger in the parent context with the
+// given arguments. If there is no logger in the parent context, slog.Default()
+// will be used.
+func WithGroup(ctx context.Context, name string) context.Context {
+	l := FromContext(ctx)
+	if l == nil {
+		l = slog.Default()
+	}
+	return WithLogger(ctx, l.WithGroup(name))
 }
 
 // MultiHandler is an slog.Handler that wraps a number of other Handlers,
